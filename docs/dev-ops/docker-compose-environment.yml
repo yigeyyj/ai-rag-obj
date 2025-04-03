@@ -20,7 +20,7 @@ services:
     hostname: redis
     privileged: true
     ports:
-      - 16379:6379
+      - 16379:637 9
     volumes:
       - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
     command: redis-server /usr/local/etc/redis/redis.conf
@@ -54,7 +54,7 @@ services:
         condition: service_healthy
 
   vector_db:
-    image: pgvector/pgvector:v0.5.0
+    image: ankane/pgvector:latest
     container_name: vector_db
     restart: always
     environment:
