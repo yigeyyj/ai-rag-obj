@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 
 @Slf4j
@@ -14,5 +15,6 @@ import java.util.HashMap;
 public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
+        ByteBuffer.allocateDirect(1024);
     }
 }

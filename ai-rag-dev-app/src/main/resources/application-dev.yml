@@ -2,9 +2,19 @@ server:
   port: 8090
 
 spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: postgres
+    url: jdbc:postgresql://127.0.0.1:5432/springai
+    type: com.zaxxer.hikari.HikariDataSource
   ai:
     ollama:
       base-url: http://127.0.0.1:11434
+      embedding:
+        options:
+          num-batch: 512
+        model: nomic-embed-text
 
 
 # Redis
