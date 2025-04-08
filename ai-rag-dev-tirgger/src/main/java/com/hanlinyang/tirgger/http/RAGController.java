@@ -6,6 +6,8 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RList;
 import org.redisson.api.RedissonClient;
+import org.springframework.ai.document.Document;
+import org.springframework.ai.reader.tika.TikaDocumentReader;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.ai.vectorstore.PgVectorStore;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -41,6 +43,22 @@ public class RAGController implements IRAGService {
 
     @Override
     public Response<String> uploadFile(String ragTag, List<MultipartFile> files) {
-        return null;
+        for (MultipartFile file : files) {
+            TikaDocumentReader documentReader = new TikaDocumentReader(file.getResource());
+            List<Document> documents = documentReader.get();
+            List<Document> documentSplitterList = tokenTextSplitter.apply(documents);
+
+            documentSplitterList.forEach(doc -> doc.getMetadata().put("knowledge", ragTag));
+
+            pgVectorStore.accept(documentSplitterList);
+            // 添加知识库记录
+            RList<String> elements = redissonClient.getList("ragTag");
+            if (!elements.contains(ragTag)) {
+                elements.add(ragTag);
+            }
+        }
+
+        log.info("上传知识库完成 {}", ragTag);
+        return Response.<String>builder().code("0000").info("调用成功").build();
     }
 }
